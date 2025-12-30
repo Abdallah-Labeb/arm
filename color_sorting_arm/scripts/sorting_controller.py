@@ -95,12 +95,24 @@ class SortingController:
         rospy.loginfo("Moving to home position")
         home_positions = {
             'joint1': 0.0,
-            'joint2': 0.0,
-            'joint3': 0.0,
-            'joint4': 0.0,
+            'joint2': 0.5,    # Tilt forward to see table
+            'joint3': -0.5,   # Elbow compensation
+            'joint4': -0.3,   # Wrist down to point camera forward
             'joint5': 0.0,
         }
         self.move_joints(home_positions)
+    
+    def move_to_observation_pose(self):
+        """Move arm to observation position to see cubes"""
+        rospy.loginfo("Moving to observation position")
+        observation_positions = {
+            'joint1': 0.0,
+            'joint2': 0.7,    # Tilt more forward
+            'joint3': -0.8,   # Elbow up
+            'joint4': -0.5,   # Wrist angled to see table
+            'joint5': 0.0,
+        }
+        self.move_joints(observation_positions, duration=3.0)
     
     def inverse_kinematics(self, target_x, target_y, target_z):
         """Simple inverse kinematics for 5-DOF arm"""
@@ -309,6 +321,11 @@ class SortingController:
         
         # Wait a bit for everything to initialize
         rospy.sleep(3.0)
+        
+        # Move to observation position to see the cubes
+        rospy.loginfo("Moving to observation position to detect cubes...")
+        self.move_to_observation_pose()
+        rospy.sleep(2.0)
         
         while not rospy.is_shutdown():
             if not self.processing and len(self.detected_objects) > 0:
