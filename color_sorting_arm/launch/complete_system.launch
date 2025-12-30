@@ -1,0 +1,12 @@
+<launch>
+
+  <!-- Launch Gazebo simulation -->
+  <include file="$(find color_sorting_arm)/launch/gazebo.launch" />
+  
+  <!-- Launch RViz visualization -->
+  <include file="$(find color_sorting_arm)/launch/rviz.launch" />
+  
+  <!-- Launch all nodes -->
+  <include file="$(find color_sorting_arm)/launch/nodes.launch" />
+
+</launch>

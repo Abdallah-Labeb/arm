@@ -1,0 +1,19 @@
+<launch>
+
+  <!-- Color Detector Node -->
+  <node name="color_detector" pkg="color_sorting_arm" type="color_detector.py" 
+        output="screen" />
+  
+  <!-- Position Estimator Node -->
+  <node name="position_estimator" pkg="color_sorting_arm" type="position_estimator.py" 
+        output="screen" />
+  
+  <!-- Gripper Controller Node -->
+  <node name="gripper_controller" pkg="color_sorting_arm" type="gripper_controller.py" 
+        output="screen" />
+  
+  <!-- Sorting Controller Node -->
+  <node name="sorting_controller" pkg="color_sorting_arm" type="sorting_controller.py" 
+        output="screen" />
+
+</launch>
