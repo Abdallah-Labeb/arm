@@ -21,8 +21,11 @@ class PositionEstimator:
         self.camera_matrix = None
         self.dist_coeffs = None
         
-        # Assumed height of table surface (will be refined with TF)
-        self.table_height = 0.8
+        # Assumed height of table surface 
+        self.table_height = 0.8  # Table top is at z=0.8
+        
+        # Robot base is at z=0.8 (on table)
+        self.robot_base_height = 0.8
         
         # Publishers
         self.position_pub = rospy.Publisher('/object_positions', Object3DArray, queue_size=10)
@@ -66,7 +69,6 @@ class PositionEstimator:
     def estimate_depth(self):
         """
         Estimate depth to table surface using TF
-        This is a simplified approach - assumes camera is looking at table
         """
         try:
             # Get transform from camera to base_link
@@ -74,16 +76,25 @@ class PositionEstimator:
                                                             'camera_optical_frame', 
                                                             rospy.Time(0))
             
-            # Camera height above base
-            camera_height = trans[2]
+            # Camera position relative to base
+            camera_z = trans[2]
+            camera_x = trans[0]
             
-            # Estimated distance to table (approximate)
-            depth = camera_height - self.table_height + 0.025  # Add cube half-height
-            return max(depth, 0.3)  # Minimum depth
+            # Cubes are on table at z=0.83 (world frame)
+            # Robot base is at z=0.8 (world frame)
+            # So cubes are at z=0.03 relative to robot base
+            cube_height_rel = 0.03  # Cube top relative to robot base
+            
+            # Depth estimation based on camera angle
+            # Camera is tilted down, so depth = distance along camera's z-axis
+            depth = np.sqrt(camera_x**2 + (camera_z - cube_height_rel)**2)
+            
+            rospy.loginfo_throttle(5, f"Estimated depth: {depth:.3f}m")
+            return max(depth, 0.2)
             
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
-            rospy.logwarn(f"TF Error: {e}")
-            return 0.5  # Default depth
+            rospy.logwarn_throttle(5, f"TF Error: {e}")
+            return 0.4  # Default depth
     
     def transform_to_base_link(self, point_camera):
         """Transform point from camera frame to base_link frame"""

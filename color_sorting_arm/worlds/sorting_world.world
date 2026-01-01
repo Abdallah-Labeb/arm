@@ -48,7 +48,7 @@
 
     <!-- Red Cube 1 -->
     <model name="red_cube_1">
-      <pose>0.6 0.2 0.825 0 0 0</pose>
+      <pose>0.35 0.15 0.83 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
@@ -89,7 +89,7 @@
 
     <!-- Red Cube 2 -->
     <model name="red_cube_2">
-      <pose>0.7 0.15 0.825 0 0 0</pose>
+      <pose>0.4 0.1 0.83 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
@@ -130,7 +130,7 @@
 
     <!-- Blue Cube 1 -->
     <model name="blue_cube_1">
-      <pose>0.6 0 0.825 0 0 0</pose>
+      <pose>0.35 0 0.83 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
@@ -171,7 +171,7 @@
 
     <!-- Blue Cube 2 -->
     <model name="blue_cube_2">
-      <pose>0.7 -0.05 0.825 0 0 0</pose>
+      <pose>0.4 -0.05 0.83 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
@@ -212,7 +212,7 @@
 
     <!-- Green Cube 1 -->
     <model name="green_cube_1">
-      <pose>0.6 -0.2 0.825 0 0 0</pose>
+      <pose>0.35 -0.15 0.83 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
@@ -253,7 +253,7 @@
 
     <!-- Green Cube 2 -->
     <model name="green_cube_2">
-      <pose>0.7 -0.25 0.825 0 0 0</pose>
+      <pose>0.4 -0.2 0.83 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
@@ -296,12 +296,12 @@
     <!-- Red zone -->
     <model name="red_zone">
       <static>true</static>
-      <pose>0.2 0.3 0.801 0 0 0</pose>
+      <pose>0.25 0.25 0.801 0 0 0</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
             <box>
-              <size>0.15 0.15 0.002</size>
+              <size>0.12 0.12 0.002</size>
             </box>
           </geometry>
           <material>
@@ -315,12 +315,12 @@
     <!-- Blue zone -->
     <model name="blue_zone">
       <static>true</static>
-      <pose>0.2 0 0.801 0 0 0</pose>
+      <pose>0.25 0 0.801 0 0 0</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
             <box>
-              <size>0.15 0.15 0.002</size>
+              <size>0.12 0.12 0.002</size>
             </box>
           </geometry>
           <material>
@@ -334,12 +334,12 @@
     <!-- Green zone -->
     <model name="green_zone">
       <static>true</static>
-      <pose>0.2 -0.3 0.801 0 0 0</pose>
+      <pose>0.25 -0.25 0.801 0 0 0</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
             <box>
-              <size>0.15 0.15 0.002</size>
+              <size>0.12 0.12 0.002</size>
             </box>
           </geometry>
           <material>

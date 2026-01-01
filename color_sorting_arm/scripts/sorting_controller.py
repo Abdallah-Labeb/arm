@@ -45,12 +45,15 @@ class SortingController:
         self.joint_sub = rospy.Subscriber('/sorting_arm/joint_states', JointState, 
                                          self.joint_state_callback)
         
-        # Link lengths (from URDF)
-        self.L1 = 0.2   # Link 1 height
-        self.L2 = 0.3   # Link 2 length
-        self.L3 = 0.3   # Link 3 length
-        self.L4 = 0.2   # Link 4 length
-        self.L5 = 0.1   # Link 5 to gripper
+        # Link lengths (from URDF) - corrected
+        self.L1 = 0.225  # Base to joint2 (0.025 + 0.2)
+        self.L2 = 0.3    # Link 2 length
+        self.L3 = 0.3    # Link 3 length
+        self.L4 = 0.2    # Link 4 length
+        self.L5 = 0.15   # Link 5 to gripper tip
+        
+        # Robot base height (spawned at z=0.8 on table)
+        self.base_height = 0.8
         
         # Gripper command publisher
         self.gripper_pub = rospy.Publisher('/gripper_command', Bool, queue_size=10)
@@ -62,11 +65,11 @@ class SortingController:
         self.detected_objects = []
         self.processing = False
         
-        # Sorting zone positions (x, y, z)
+        # Sorting zone positions (x, y, z) - adjusted for robot position
         self.sorting_zones = {
-            'red': (0.2, 0.3, 0.85),
-            'blue': (0.2, 0.0, 0.85),
-            'green': (0.2, -0.3, 0.85)
+            'red': (0.25, 0.25, 0.85),
+            'blue': (0.25, 0.0, 0.85),
+            'green': (0.25, -0.25, 0.85)
         }
         
         # Subscribe to object positions
@@ -91,75 +94,83 @@ class SortingController:
         rospy.sleep(duration)
     
     def move_to_home(self):
-        """Move arm to home position"""
+        """Move arm to home/ready position - arm bent forward ready to work"""
         rospy.loginfo("Moving to home position")
         home_positions = {
-            'joint1': 1.57,   # face the table
-            'joint2': 0.5,    # Tilt forward to see table
-            'joint3': -0.5,   # Elbow compensation
-            'joint4': -0.3,   # Wrist down to point camera forward
+            'joint1': 0.0,
+            'joint2': 0.3,
+            'joint3': -0.3,
+            'joint4': 0.0,
             'joint5': 0.0,
         }
-        self.move_joints(home_positions)
+        self.move_joints(home_positions, duration=2.0)
     
     def move_to_observation_pose(self):
-        """Move arm to observation position to see cubes"""
+        """Move arm to observation position - camera looks at work area"""
         rospy.loginfo("Moving to observation position")
+        # The camera is now on link1, so we just need arm in home-ish position
         observation_positions = {
-            'joint1': 1.57,   # rotate toward table/cubes
-            'joint2': 0.9,    # Tilt more forward
-            'joint3': -1.0,   # Elbow up
-            'joint4': -0.6,   # Wrist angled to see table
+            'joint1': 0.0,
+            'joint2': 0.2,
+            'joint3': -0.2,
+            'joint4': 0.0,
             'joint5': 0.0,
         }
-        self.move_joints(observation_positions, duration=3.0)
+        self.move_joints(observation_positions, duration=2.0)
     
     def inverse_kinematics(self, target_x, target_y, target_z):
         """Simple inverse kinematics for 5-DOF arm"""
-        # Joint 1 (base rotation)
+        # Joint 1 (base rotation) - rotate to face target
         j1 = np.arctan2(target_y, target_x)
         
-        # Horizontal reach distance
+        # Horizontal reach distance from base
         r = np.sqrt(target_x**2 + target_y**2)
         
-        # Vertical height from joint 2
-        z = target_z - self.L1
+        # Target z relative to robot base (robot is at z=0.8)
+        z_rel = target_z - self.base_height - self.L1
         
-        # Account for end effector length
-        gripper_offset = self.L4 + self.L5
-        r_wrist = r - gripper_offset * 0.3
-        z_wrist = z + gripper_offset * 0.3
+        # Account for end effector - we want gripper to reach target
+        gripper_length = self.L4 + self.L5
         
-        # Distance to wrist target
-        d = np.sqrt(r_wrist**2 + z_wrist**2)
+        # Approximate end effector offset
+        r_eff = r - 0.05  # Horizontal offset
+        z_eff = z_rel + 0.1  # Vertical offset
         
-        # Check if target is reachable
-        if d > (self.L2 + self.L3):
-            rospy.logwarn(f"Target may be out of reach: d={d:.2f}, max={self.L2 + self.L3:.2f}")
-            d = self.L2 + self.L3 - 0.01
+        # Distance to target for 2-link IK (link2 + link3)
+        d = np.sqrt(r_eff**2 + z_eff**2)
         
-        # Joint 3 (elbow)
+        # Clamp to reachable distance
+        max_reach = self.L2 + self.L3 - 0.05
+        if d > max_reach:
+            rospy.logwarn(f"Target distance {d:.3f} exceeds reach {max_reach:.3f}, clamping")
+            d = max_reach
+        if d < 0.1:
+            d = 0.1
+        
+        # Joint 3 (elbow) using law of cosines
         cos_j3 = (d**2 - self.L2**2 - self.L3**2) / (2 * self.L2 * self.L3)
-        cos_j3 = np.clip(cos_j3, -1, 1)
-        j3 = np.arccos(cos_j3)
+        cos_j3 = np.clip(cos_j3, -1.0, 1.0)
+        j3 = -np.arccos(cos_j3)  # Negative for elbow up
         
         # Joint 2 (shoulder)
-        alpha = np.arctan2(z_wrist, r_wrist)
-        beta = np.arctan2(self.L3 * np.sin(j3), self.L2 + self.L3 * np.cos(j3))
-        j2 = alpha - beta
+        alpha = np.arctan2(z_eff, r_eff)
+        beta = np.arctan2(self.L3 * np.sin(abs(j3)), self.L2 + self.L3 * np.cos(j3))
+        j2 = alpha + beta
         
-        # Joint 4 (wrist pitch)
-        j4 = -(j2 + j3) - np.pi/4
+        # Joint 4 (wrist pitch) - keep gripper pointing down
+        j4 = -j2 - j3 - np.pi/2
         
-        # Joint 5 (wrist roll)
+        # Joint 5 (wrist roll) - keep aligned
         j5 = -j1
         
         # Apply joint limits
         j1 = np.clip(j1, -np.pi, np.pi)
-        j2 = np.clip(j2, -np.pi/2, np.pi/2)
-        j3 = np.clip(j3, -np.pi/2, np.pi/2)
-        j4 = np.clip(j4, -np.pi/2, np.pi/2)
+        j2 = np.clip(j2, -1.57, 1.57)
+        j3 = np.clip(j3, -1.57, 1.57)
+        j4 = np.clip(j4, -1.57, 1.57)
         j5 = np.clip(j5, -np.pi, np.pi)
+        
+        rospy.loginfo(f"IK solution: j1={j1:.2f}, j2={j2:.2f}, j3={j3:.2f}, j4={j4:.2f}, j5={j5:.2f}")
         
         return [j1, j2, j3, j4, j5]
     
