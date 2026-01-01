@@ -1,12 +1,18 @@
 <launch>
 
-  <!-- Launch Gazebo simulation -->
+  <!-- Use simulation time for all nodes -->
+  <param name="/use_sim_time" value="true"/>
+
+  <!-- Launch Gazebo simulation (includes robot_state_publisher) -->
   <include file="$(find color_sorting_arm)/launch/gazebo.launch" />
+  
+  <!-- Wait for Gazebo to start before launching other nodes -->
+  <arg name="delay" default="3.0"/>
   
   <!-- Launch RViz visualization -->
   <include file="$(find color_sorting_arm)/launch/rviz.launch" />
   
-  <!-- Launch all nodes -->
+  <!-- Launch all processing nodes -->
   <include file="$(find color_sorting_arm)/launch/nodes.launch" />
 
 </launch>
