@@ -1,5 +1,13 @@
 <launch>
   
+  <!-- Arguments -->
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  
+  <!-- Set use_sim_time parameter -->
+  <param name="/use_sim_time" value="true"/>
+  
   <!-- Load robot description -->
   <param name="robot_description" 
          command="$(find xacro)/xacro '$(find color_sorting_arm)/urdf/arm.gazebo.xacro'" />
@@ -7,16 +15,16 @@
   <!-- Launch Gazebo with sorting world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find color_sorting_arm)/worlds/sorting_world.world"/>
-    <arg name="paused" value="false"/>
-    <arg name="use_sim_time" value="true"/>
-    <arg name="gui" value="true"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="gui" value="$(arg gui)"/>
     <arg name="headless" value="false"/>
     <arg name="debug" value="false"/>
   </include>
   
-  <!-- Spawn robot in Gazebo on the table -->
+  <!-- Spawn robot in Gazebo on the table (table top is at z=0.7) -->
   <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
-        args="-param robot_description -urdf -model sorting_arm -x 0.0 -y 0 -z 0.8"
+        args="-param robot_description -urdf -model sorting_arm -x 0.0 -y 0 -z 0.7"
         output="screen" />
   
   <!-- Load joint controller configurations -->
@@ -33,15 +41,13 @@
               joint5_position_controller
               gripper_left_position_controller
               gripper_right_position_controller"/>
-  
-  <!-- Joint State Publisher GUI (for testing) -->
-  <!-- <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" /> -->
 
   <!-- Robot state publisher - reads joint_states and publishes TF -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
         respawn="false" output="screen">
-    <remap from="joint_states" to="/sorting_arm/joint_states" />
+    <remap from="joint_states" to="/sorting_arm/joint_states"/>
     <param name="publish_frequency" value="50.0"/>
+    <param name="use_tf_static" value="true"/>
   </node>
 
 </launch>

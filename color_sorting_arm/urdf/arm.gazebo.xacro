@@ -14,39 +14,53 @@
 
   <!-- Gazebo materials -->
   <gazebo reference="base_link">
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/DarkGrey</material>
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
   </gazebo>
   
   <gazebo reference="link1">
-    <material>Gazebo/Blue</material>
+    <material>Gazebo/Orange</material>
   </gazebo>
   
   <gazebo reference="link2">
-    <material>Gazebo/White</material>
+    <material>Gazebo/Blue</material>
   </gazebo>
   
   <gazebo reference="link3">
-    <material>Gazebo/Blue</material>
-  </gazebo>
-  
-  <gazebo reference="link4">
     <material>Gazebo/White</material>
   </gazebo>
   
-  <gazebo reference="link5">
+  <gazebo reference="link4">
     <material>Gazebo/Blue</material>
+  </gazebo>
+  
+  <gazebo reference="link5">
+    <material>Gazebo/White</material>
   </gazebo>
   
   <gazebo reference="gripper_base">
     <material>Gazebo/Grey</material>
   </gazebo>
   
-  <gazebo reference="gripper_left_finger">
-    <material>Gazebo/Black</material>
+  <gazebo reference="gripper_left">
+    <material>Gazebo/DarkGrey</material>
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
   </gazebo>
   
-  <gazebo reference="gripper_right_finger">
-    <material>Gazebo/Black</material>
+  <gazebo reference="gripper_right">
+    <material>Gazebo/DarkGrey</material>
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
+  </gazebo>
+  
+  <gazebo reference="camera_pole">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+  
+  <gazebo reference="camera_link">
+    <material>Gazebo/DarkGrey</material>
   </gazebo>
 
   <!-- Camera sensor plugin -->
