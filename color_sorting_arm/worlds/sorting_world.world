@@ -51,8 +51,8 @@
     <!-- Camera with clear visual design to show lens direction -->
     <!-- Body = blue box, Lens = red cylinder pointing out -->
     <model name="overhead_camera">
-      <static>false</static>
-      <pose>0.35 0 1.0 0 0 0</pose>
+      <static>true</static>
+      <pose>0.35 0 1.5 0 0 0</pose>
       <link name="camera_link">
         <inertial>
           <mass>0.5</mass>
