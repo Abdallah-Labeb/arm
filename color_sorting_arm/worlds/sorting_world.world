@@ -48,15 +48,12 @@
     </model>
 
     <!-- =========================== OVERHEAD CAMERA =========================== -->
-    <!-- Simple camera directly above table center -->
+    <!-- Ultra-simple camera - looking FORWARD (+X direction) at table from side -->
     <model name="overhead_camera">
       <static>true</static>
-      <pose>0.35 0 1.3 0 0 0</pose>
+      <!-- Position camera to SIDE of table, looking AT it (not down) -->
+      <pose>-0.2 0 0.8 0 0 0</pose>
       <link name="camera_link">
-        <inertial>
-          <mass>0.1</mass>
-        </inertial>
-        
         <visual name="visual">
           <geometry>
             <box>
@@ -64,16 +61,12 @@
             </box>
           </geometry>
           <material>
-            <ambient>0 1 0 1</ambient>
-            <diffuse>0 1 0 1</diffuse>
+            <ambient>1 0 0 1</ambient>
+            <diffuse>1 0 0 1</diffuse>
           </material>
         </visual>
         
         <sensor type="camera" name="camera">
-          <!-- Camera optical frame: rotate to look down -->
-          <!-- In Gazebo, camera +Z is forward, so we rotate -90deg around Y (pitch) -->
-          <!-- Then rotate 180deg around X (roll) to fix orientation -->
-          <pose>0 0 0 0 1.57079632679 0</pose>
           <visualize>true</visualize>
           <update_rate>30</update_rate>
           <camera>
@@ -84,8 +77,8 @@
               <format>R8G8B8</format>
             </image>
             <clip>
-              <near>0.1</near>
-              <far>100</far>
+              <near>0.05</near>
+              <far>10</far>
             </clip>
           </camera>
           <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
@@ -94,7 +87,7 @@
             <cameraName>camera</cameraName>
             <imageTopicName>image_raw</imageTopicName>
             <cameraInfoTopicName>camera_info</cameraInfoTopicName>
-            <frameName>camera_link_optical</frameName>
+            <frameName>camera_link</frameName>
           </plugin>
         </sensor>
       </link>
