@@ -48,32 +48,60 @@
     </model>
 
     <!-- =========================== OVERHEAD CAMERA =========================== -->
-    <!-- Camera positioned above table, looking down -->
-    <!-- Gazebo camera convention: camera looks along +Z axis in OPTICAL frame -->
-    <!-- The optical frame is rotated from the link frame -->
-    <!-- We position camera above table and let plugin handle frame conversion -->
+    <!-- Camera with clear visual design to show lens direction -->
+    <!-- Body = blue box, Lens = red cylinder pointing out -->
     <model name="overhead_camera">
-      <static>true</static>
-      <!-- Position: above table center (x=0.35, y=0, z=1.0) -->
-      <!-- Orientation: no rotation, camera naturally points in +X direction -->
-      <!-- We'll use yaw=-90deg to point toward table, pitch=90deg to point down -->
-      <pose>0.35 0 1.0 0 1.5708 -1.5708</pose>
+      <static>false</static>
+      <pose>0.35 0 1.0 0 0 0</pose>
       <link name="camera_link">
         <inertial>
-          <mass>0.1</mass>
+          <mass>0.5</mass>
+          <inertia>
+            <ixx>0.001</ixx>
+            <iyy>0.001</iyy>
+            <izz>0.001</izz>
+          </inertia>
         </inertial>
-        <visual name="visual">
+        
+        <!-- Camera Body (blue rectangular box) -->
+        <visual name="body_visual">
+          <pose>0 0 0 0 0 0</pose>
           <geometry>
             <box>
-              <size>0.05 0.05 0.05</size>
+              <size>0.12 0.08 0.06</size>
             </box>
+          </geometry>
+          <material>
+            <ambient>0.2 0.2 0.8 1</ambient>
+            <diffuse>0.2 0.2 0.8 1</diffuse>
+          </material>
+        </visual>
+        
+        <!-- Camera Lens (red cylinder) - points in +X direction -->
+        <visual name="lens_visual">
+          <pose>0.08 0 0 0 1.5708 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.06</length>
+            </cylinder>
           </geometry>
           <material>
             <ambient>1.0 0.0 0.0 1</ambient>
             <diffuse>1.0 0.0 0.0 1</diffuse>
           </material>
         </visual>
+        
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.12 0.08 0.06</size>
+            </box>
+          </geometry>
+        </collision>
+        
         <sensor type="camera" name="camera_sensor">
+          <pose>0.08 0 0 0 0 0</pose>
           <update_rate>30.0</update_rate>
           <visualize>true</visualize>
           <camera name="overhead_cam">
