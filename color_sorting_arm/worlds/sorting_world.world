@@ -86,9 +86,8 @@
         </visual>
         
         <sensor type="camera" name="camera">
-          <!-- CRITICAL: In Gazebo camera sensor, +Z axis is viewing direction -->
-          <!-- We need +Z to point DOWN (world -Z), so rotate around X by 180deg -->
-          <pose>0 0 -0.08 3.14159 0 0</pose>
+          <!-- Sensor at bottom of camera, pitch=90deg to look DOWN -->
+          <pose>0 0 -0.08 0 1.5708 0</pose>
           <visualize>true</visualize>
           <update_rate>30</update_rate>
           <camera>
