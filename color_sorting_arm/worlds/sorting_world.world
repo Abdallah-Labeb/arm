@@ -49,11 +49,11 @@
 
     <!-- =========================== OVERHEAD CAMERA =========================== -->
     <!-- Camera attached to pole, lens pointing DOWN at table -->
-    <!-- NO rotation on model - camera sensor rotated to point DOWN -->
+    <!-- Positioned on top of camera stand pole -->
     <model name="overhead_camera">
       <static>true</static>
-      <!-- Camera at x=0.35, y=0, z=1.2, NO rotation -->
-      <pose>0.35 0 1.2 0 0 0</pose>
+      <!-- Position on pole: x=-0.3 (same as pole), z=1.5 (top of pole) -->
+      <pose>-0.3 0 1.5 0 0 0</pose>
       <link name="camera_link">
         <inertial>
           <mass>0.5</mass>
