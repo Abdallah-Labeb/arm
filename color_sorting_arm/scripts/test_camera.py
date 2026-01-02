@@ -54,9 +54,18 @@ class CameraTest:
         
         try:
             # Convert ROS Image to OpenCV format
-            cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+            # First convert to passthrough to get original encoding
+            if msg.encoding == "rgb8":
+                cv_image = self.bridge.imgmsg_to_cv2(msg, "rgb8")
+                # Convert RGB to BGR for OpenCV
+                cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
+            else:
+                cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         except CvBridgeError as e:
             rospy.logerr(f"CV Bridge Error: {e}")
+            return
+        except Exception as e:
+            rospy.logerr(f"Image conversion error: {e}")
             return
         
         # Display image statistics
