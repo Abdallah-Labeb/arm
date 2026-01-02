@@ -110,9 +110,9 @@
         </visual>
       </link>
       
-      <!-- Camera housing - positioned above center of table, looking down -->
+      <!-- Camera housing - positioned above center of table, looking DOWN -->
       <link name="camera_housing">
-        <pose>0.35 0 1.35 0 1.57 0</pose>
+        <pose>0.35 0 1.3 0 0 0</pose>
         <visual name="visual">
           <geometry>
             <box>
@@ -125,9 +125,9 @@
           </material>
         </visual>
         
-        <!-- Camera sensor looking straight down -->
+        <!-- Camera sensor looking straight down at table -->
         <sensor type="camera" name="overhead_camera">
-          <pose>0 0 0 0 0 0</pose>
+          <pose>0 0 -0.05 0 1.5708 0</pose>
           <update_rate>30.0</update_rate>
           <camera name="head">
             <horizontal_fov>1.4</horizontal_fov>
