@@ -48,15 +48,16 @@
     </model>
 
     <!-- =========================== OVERHEAD CAMERA =========================== -->
-    <!-- Camera positioned above table center, looking straight down -->
-    <!-- Gazebo camera default: looks along +X, up is -Z in camera frame -->
-    <!-- To point camera DOWN at table: -->
-    <!--   1. pitch = PI/2 (90deg) rotates +X axis to point down (-Z world) -->
-    <!--   2. But camera "up" direction needs fixing, so roll = PI (180deg) -->
-    <!-- Final pose: x y z roll pitch yaw = 0.35 0 1.0 3.14159 1.5708 0 -->
+    <!-- Camera positioned above table, looking down -->
+    <!-- Gazebo camera convention: camera looks along +Z axis in OPTICAL frame -->
+    <!-- The optical frame is rotated from the link frame -->
+    <!-- We position camera above table and let plugin handle frame conversion -->
     <model name="overhead_camera">
       <static>true</static>
-      <pose>0.35 0 1.0 3.14159 1.5708 0</pose>
+      <!-- Position: above table center (x=0.35, y=0, z=1.0) -->
+      <!-- Orientation: no rotation, camera naturally points in +X direction -->
+      <!-- We'll use yaw=-90deg to point toward table, pitch=90deg to point down -->
+      <pose>0.35 0 1.0 0 1.5708 -1.5708</pose>
       <link name="camera_link">
         <inertial>
           <mass>0.1</mass>
@@ -68,8 +69,8 @@
             </box>
           </geometry>
           <material>
-            <ambient>0.8 0.2 0.2 1</ambient>
-            <diffuse>0.8 0.2 0.2 1</diffuse>
+            <ambient>1.0 0.0 0.0 1</ambient>
+            <diffuse>1.0 0.0 0.0 1</diffuse>
           </material>
         </visual>
         <sensor type="camera" name="camera_sensor">
