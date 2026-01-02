@@ -49,11 +49,11 @@
 
     <!-- =========================== OVERHEAD CAMERA =========================== -->
     <!-- Camera attached to pole, lens pointing DOWN at table -->
-    <!-- Body = blue box, Lens = red cylinder -->
-    <!-- Pitch=90deg rotates camera so lens (red) points DOWN -->
+    <!-- NO rotation on model - camera sensor rotated to point DOWN -->
     <model name="overhead_camera">
       <static>true</static>
-      <pose>0.35 0 1.2 0 1.5708 0</pose>
+      <!-- Camera at x=0.35, y=0, z=1.2, NO rotation -->
+      <pose>0.35 0 1.2 0 0 0</pose>
       <link name="camera_link">
         <inertial>
           <mass>0.5</mass>
@@ -64,12 +64,12 @@
           </inertia>
         </inertial>
         
-        <!-- Camera Body (blue rectangular box) -->
+        <!-- Camera Body (blue box) -->
         <visual name="body_visual">
           <pose>0 0 0 0 0 0</pose>
           <geometry>
             <box>
-              <size>0.12 0.08 0.06</size>
+              <size>0.08 0.08 0.12</size>
             </box>
           </geometry>
           <material>
@@ -78,9 +78,9 @@
           </material>
         </visual>
         
-        <!-- Camera Lens (red cylinder) - points in +X direction -->
+        <!-- Camera Lens (red cylinder) pointing DOWN in -Z direction -->
         <visual name="lens_visual">
-          <pose>0.08 0 0 0 1.5708 0</pose>
+          <pose>0 0 -0.08 0 0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.02</radius>
@@ -96,13 +96,15 @@
         <collision name="collision">
           <geometry>
             <box>
-              <size>0.12 0.08 0.06</size>
+              <size>0.08 0.08 0.12</size>
             </box>
           </geometry>
         </collision>
         
+        <!-- Camera sensor pointing DOWN -->
         <sensor type="camera" name="camera_sensor">
-          <pose>0.08 0 0 0 0 0</pose>
+          <!-- Sensor rotated: pitch=-90deg makes camera look DOWN (-Z) -->
+          <pose>0 0 -0.08 0 -1.5708 0</pose>
           <update_rate>30.0</update_rate>
           <visualize>true</visualize>
           <camera name="overhead_cam">
