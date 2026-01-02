@@ -15,18 +15,19 @@ from color_sorting_arm.msg import Object3DArray
 class SortingController:
     """Main controller for sorting colored cubes by color."""
     
-    # Sorting bin locations (x, y, z) in base_link frame
+    # Sorting bin locations (x, y, z) relative to robot base on table
     BIN_LOCATIONS = {
-        'red': (0.2, 0.35, 0.03),    # Left bin
-        'blue': (0.2, -0.35, 0.03),  # Right bin
-        'green': (0.45, 0.0, 0.03)   # Far bin
+        'red': (0.6, 0.25, 0.05),    # Red bin
+        'blue': (0.6, -0.25, 0.05),  # Blue bin
+        'green': (0.6, 0.0, 0.05)    # Green bin
     }
     
-    # Robot arm parameters (matches URDF link lengths)
-    L1 = 0.09   # base_link(0.04) + link1(0.05) = 0.09
-    L2 = 0.08   # link2 length
-    L3 = 0.07   # link3 length
-    L4 = 0.10   # link4(0.05) + link5(0.03) + gripper(0.02)
+    # Robot arm parameters (matches new URDF link lengths)
+    # Total reach ~0.5m
+    L1 = 0.11   # base(0.05) + link1(0.06) = 0.11
+    L2 = 0.15   # link2 length
+    L3 = 0.13   # link3 length
+    L4 = 0.16   # link4(0.08) + link5(0.04) + gripper(0.04)
     
     def __init__(self):
         rospy.init_node('sorting_controller')

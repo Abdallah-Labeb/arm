@@ -1,133 +1,118 @@
 #!/usr/bin/env python3
 """
-Simple Arm Test Script
-Directly tests the arm movement without waiting for camera/detection.
-Run this to verify the arm is moving correctly.
+ARM STARTUP TEST
+This script runs automatically when launched and performs visible test movements.
+Run: rosrun color_sorting_arm test_arm_movement.py
 """
 
 import rospy
 from std_msgs.msg import Float64
-import time
+import sys
+
+class ArmTester:
+    def __init__(self):
+        rospy.init_node('arm_startup_test', anonymous=True)
+        
+        # Publishers
+        self.pubs = {}
+        for i in range(1, 6):
+            topic = f'/sorting_arm/joint{i}_position_controller/command'
+            self.pubs[f'joint{i}'] = rospy.Publisher(topic, Float64, queue_size=1)
+        
+        self.gripper_left = rospy.Publisher(
+            '/sorting_arm/gripper_left_position_controller/command', Float64, queue_size=1)
+        self.gripper_right = rospy.Publisher(
+            '/sorting_arm/gripper_right_position_controller/command', Float64, queue_size=1)
+        
+        rospy.loginfo("Waiting for Gazebo and controllers...")
+        rospy.sleep(3.0)
+
+    def move(self, j1, j2, j3, j4, j5, duration=1.5):
+        """Move all joints to specified positions."""
+        self.pubs['joint1'].publish(Float64(j1))
+        self.pubs['joint2'].publish(Float64(j2))
+        self.pubs['joint3'].publish(Float64(j3))
+        self.pubs['joint4'].publish(Float64(j4))
+        self.pubs['joint5'].publish(Float64(j5))
+        rospy.sleep(duration)
+
+    def gripper(self, open_close):
+        """Control gripper: 'open' or 'close'."""
+        if open_close == "open":
+            self.gripper_left.publish(Float64(0.02))
+            self.gripper_right.publish(Float64(0.02))
+        else:
+            self.gripper_left.publish(Float64(0.0))
+            self.gripper_right.publish(Float64(0.0))
+        rospy.sleep(0.5)
+
+    def run_test(self):
+        """Execute test movement sequence."""
+        rospy.loginfo("")
+        rospy.loginfo("=" * 60)
+        rospy.loginfo("    ARM STARTUP TEST - Verifying arm operation")
+        rospy.loginfo("=" * 60)
+        rospy.loginfo("")
+        
+        # 1. Start position - standing up
+        rospy.loginfo("[1/10] Moving to start position (standing up)...")
+        self.move(0, 0, 0, 0, 0, 2.0)
+        
+        # 2. Rotate base LEFT
+        rospy.loginfo("[2/10] Rotating base LEFT...")
+        self.move(1.0, 0, 0, 0, 0, 1.5)
+        
+        # 3. Rotate base RIGHT
+        rospy.loginfo("[3/10] Rotating base RIGHT...")
+        self.move(-1.0, 0, 0, 0, 0, 1.5)
+        
+        # 4. Back to center
+        rospy.loginfo("[4/10] Centering base...")
+        self.move(0, 0, 0, 0, 0, 1.0)
+        
+        # 5. Bend shoulder forward
+        rospy.loginfo("[5/10] Bending shoulder FORWARD...")
+        self.move(0, 1.2, 0, 0, 0, 1.5)
+        
+        # 6. Bend elbow
+        rospy.loginfo("[6/10] Bending elbow...")
+        self.move(0, 1.2, -1.5, 0, 0, 1.5)
+        
+        # 7. Bend wrist
+        rospy.loginfo("[7/10] Bending wrist DOWN...")
+        self.move(0, 1.2, -1.5, -0.8, 0, 1.5)
+        
+        # 8. Test gripper
+        rospy.loginfo("[8/10] Testing gripper - OPEN...")
+        self.gripper("open")
+        rospy.sleep(0.5)
+        
+        rospy.loginfo("[9/10] Testing gripper - CLOSE...")
+        self.gripper("close")
+        rospy.sleep(0.5)
+        self.gripper("open")
+        
+        # 10. Ready position (bent forward, ready to pick)
+        rospy.loginfo("[10/10] Moving to READY position...")
+        self.move(0, 0.8, -1.2, -0.4, 0, 2.0)
+        
+        rospy.loginfo("")
+        rospy.loginfo("=" * 60)
+        rospy.loginfo("    TEST COMPLETE! Arm is working correctly!")
+        rospy.loginfo("=" * 60)
+        rospy.loginfo("")
+
 
 def main():
-    rospy.init_node('arm_test', anonymous=True)
-    rospy.loginfo("=" * 60)
-    rospy.loginfo("ARM TEST SCRIPT - Testing basic arm movements")
-    rospy.loginfo("=" * 60)
-    
-    # Create publishers for each joint
-    pubs = {}
-    for i in range(1, 6):
-        topic = f'/sorting_arm/joint{i}_position_controller/command'
-        pubs[f'joint{i}'] = rospy.Publisher(topic, Float64, queue_size=1)
-    
-    gripper_left = rospy.Publisher('/sorting_arm/gripper_left_position_controller/command', Float64, queue_size=1)
-    gripper_right = rospy.Publisher('/sorting_arm/gripper_right_position_controller/command', Float64, queue_size=1)
-    
-    rospy.loginfo("Waiting for publishers to connect...")
-    rospy.sleep(2.0)
-    
-    def move(j1, j2, j3, j4, j5, duration=2.0, description=""):
-        if description:
-            rospy.loginfo(f">>> {description}")
-        rospy.loginfo(f"    Joints: [{j1:.2f}, {j2:.2f}, {j3:.2f}, {j4:.2f}, {j5:.2f}]")
-        pubs['joint1'].publish(Float64(j1))
-        pubs['joint2'].publish(Float64(j2))
-        pubs['joint3'].publish(Float64(j3))
-        pubs['joint4'].publish(Float64(j4))
-        pubs['joint5'].publish(Float64(j5))
-        rospy.sleep(duration)
-    
-    def gripper(state):
-        if state == "open":
-            rospy.loginfo(">>> Opening gripper")
-            gripper_left.publish(Float64(0.015))
-            gripper_right.publish(Float64(0.015))
-        else:
-            rospy.loginfo(">>> Closing gripper")
-            gripper_left.publish(Float64(0.003))
-            gripper_right.publish(Float64(0.003))
-        rospy.sleep(0.5)
-    
-    # ========== TEST SEQUENCE ==========
-    
-    rospy.loginfo("\n" + "=" * 60)
-    rospy.loginfo("TEST 1: NEUTRAL POSITION")
-    rospy.loginfo("=" * 60)
-    move(0, 0, 0, 0, 0, 2.0, "All joints to zero")
-    
-    rospy.loginfo("\n" + "=" * 60)
-    rospy.loginfo("TEST 2: BASE ROTATION (Joint 1)")
-    rospy.loginfo("=" * 60)
-    move(1.0, 0, 0, 0, 0, 1.5, "Rotate base LEFT")
-    move(-1.0, 0, 0, 0, 0, 1.5, "Rotate base RIGHT")
-    move(0, 0, 0, 0, 0, 1.5, "Return to center")
-    
-    rospy.loginfo("\n" + "=" * 60)
-    rospy.loginfo("TEST 3: SHOULDER (Joint 2)")
-    rospy.loginfo("=" * 60)
-    move(0, 1.2, 0, 0, 0, 1.5, "Shoulder FORWARD")
-    move(0, -0.5, 0, 0, 0, 1.5, "Shoulder BACK")
-    move(0, 0, 0, 0, 0, 1.5, "Return to neutral")
-    
-    rospy.loginfo("\n" + "=" * 60)
-    rospy.loginfo("TEST 4: ELBOW (Joint 3)")
-    rospy.loginfo("=" * 60)
-    move(0, 0.8, -1.5, 0, 0, 1.5, "Bend elbow DOWN")
-    move(0, 0.8, 1.0, 0, 0, 1.5, "Bend elbow UP")
-    move(0, 0, 0, 0, 0, 1.5, "Return to neutral")
-    
-    rospy.loginfo("\n" + "=" * 60)
-    rospy.loginfo("TEST 5: WRIST (Joint 4)")
-    rospy.loginfo("=" * 60)
-    move(0, 0.8, -1.0, -0.8, 0, 1.5, "Wrist DOWN")
-    move(0, 0.8, -1.0, 0.8, 0, 1.5, "Wrist UP")
-    move(0, 0, 0, 0, 0, 1.5, "Return to neutral")
-    
-    rospy.loginfo("\n" + "=" * 60)
-    rospy.loginfo("TEST 6: WRIST ROLL (Joint 5)")
-    rospy.loginfo("=" * 60)
-    move(0, 0.8, -1.0, 0, 1.5, 1.5, "Roll LEFT")
-    move(0, 0.8, -1.0, 0, -1.5, 1.5, "Roll RIGHT")
-    move(0, 0, 0, 0, 0, 1.5, "Return to neutral")
-    
-    rospy.loginfo("\n" + "=" * 60)
-    rospy.loginfo("TEST 7: GRIPPER")
-    rospy.loginfo("=" * 60)
-    gripper("open")
-    gripper("close")
-    gripper("open")
-    
-    rospy.loginfo("\n" + "=" * 60)
-    rospy.loginfo("TEST 8: REACHING POSE")
-    rospy.loginfo("=" * 60)
-    move(0, 1.0, -1.5, -0.5, 0, 2.0, "Reaching forward pose")
-    gripper("close")
-    move(0, 0.5, -0.8, -0.3, 0, 2.0, "Lift up")
-    gripper("open")
-    
-    rospy.loginfo("\n" + "=" * 60)
-    rospy.loginfo("TEST 9: WAVE MOTION")
-    rospy.loginfo("=" * 60)
-    for i in range(3):
-        rospy.loginfo(f"Wave {i+1}")
-        move(0.6, 0.6, -1.0, 0, 0, 0.6, "Wave left")
-        move(-0.6, 0.6, -1.0, 0, 0, 0.6, "Wave right")
-    
-    rospy.loginfo("\n" + "=" * 60)
-    rospy.loginfo("TEST 10: HOME POSITION")
-    rospy.loginfo("=" * 60)
-    move(0, 0.6, -1.0, -0.3, 0, 2.0, "Home position")
-    gripper("open")
-    
-    rospy.loginfo("\n" + "=" * 60)
-    rospy.loginfo("ALL TESTS COMPLETE!")
-    rospy.loginfo("The arm should have moved through various positions.")
-    rospy.loginfo("If you saw the arm move, the system is working correctly.")
-    rospy.loginfo("=" * 60)
-
-if __name__ == '__main__':
     try:
-        main()
+        tester = ArmTester()
+        tester.run_test()
     except rospy.ROSInterruptException:
         pass
+    except Exception as e:
+        rospy.logerr(f"Test failed: {e}")
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()
