@@ -1,41 +1,33 @@
 sorting_arm:
-  # Joint State Controller - publishes all joint states
   joint_state_controller:
     type: joint_state_controller/JointStateController
     publish_rate: 50
   
-  # Position Controllers for arm joints
-  # Joint 1 - Base rotation (high torque needed)
   joint1_position_controller:
     type: position_controllers/JointPositionController
     joint: joint1
     pid: {p: 50.0, i: 0.1, d: 5.0}
   
-  # Joint 2 - Shoulder (high torque for lifting)
   joint2_position_controller:
     type: position_controllers/JointPositionController
     joint: joint2
     pid: {p: 80.0, i: 0.1, d: 8.0}
   
-  # Joint 3 - Elbow
   joint3_position_controller:
     type: position_controllers/JointPositionController
     joint: joint3
     pid: {p: 60.0, i: 0.1, d: 6.0}
   
-  # Joint 4 - Wrist pitch
   joint4_position_controller:
     type: position_controllers/JointPositionController
     joint: joint4
     pid: {p: 40.0, i: 0.1, d: 4.0}
   
-  # Joint 5 - Wrist roll
   joint5_position_controller:
     type: position_controllers/JointPositionController
     joint: joint5
     pid: {p: 30.0, i: 0.1, d: 3.0}
   
-  # Gripper Controllers - precise control needed
   gripper_left_position_controller:
     type: position_controllers/JointPositionController
     joint: gripper_left_joint

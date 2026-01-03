@@ -19,7 +19,6 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
-## Generate messages
 add_message_files(
   FILES
   DetectedObject.msg
@@ -57,7 +56,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-# Install Python scripts
 catkin_install_python(PROGRAMS
   scripts/color_detector.py
   scripts/position_estimator.py
@@ -67,22 +65,18 @@ catkin_install_python(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-# Install launch files
 install(DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
 
-# Install URDF files
 install(DIRECTORY urdf/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf
 )
 
-# Install world files
 install(DIRECTORY worlds/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/worlds
 )
 
-# Install config files
 install(DIRECTORY config/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )

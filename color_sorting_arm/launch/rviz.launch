@@ -1,9 +1,7 @@
 <launch>
 
-  <!-- Use simulation time -->
   <param name="/use_sim_time" value="true"/>
 
-  <!-- Start RViz with custom configuration -->
   <node name="rviz" pkg="rviz" type="rviz" 
         args="-d $(find color_sorting_arm)/config/sorting_arm.rviz" 
         required="false" />

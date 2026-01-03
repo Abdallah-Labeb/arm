@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-ARM STARTUP TEST
-This script runs automatically when launched and performs visible test movements.
-Run: rosrun color_sorting_arm test_arm_movement.py
-"""
 
 import rospy
 from std_msgs.msg import Float64
@@ -13,7 +8,6 @@ class ArmTester:
     def __init__(self):
         rospy.init_node('arm_startup_test', anonymous=True)
         
-        # Publishers
         self.pubs = {}
         for i in range(1, 6):
             topic = f'/sorting_arm/joint{i}_position_controller/command'
@@ -28,7 +22,6 @@ class ArmTester:
         rospy.sleep(3.0)
 
     def move(self, j1, j2, j3, j4, j5, duration=1.5):
-        """Move all joints to specified positions."""
         self.pubs['joint1'].publish(Float64(j1))
         self.pubs['joint2'].publish(Float64(j2))
         self.pubs['joint3'].publish(Float64(j3))
@@ -37,7 +30,6 @@ class ArmTester:
         rospy.sleep(duration)
 
     def gripper(self, open_close):
-        """Control gripper: 'open' or 'close'."""
         if open_close == "open":
             self.gripper_left.publish(Float64(0.02))
             self.gripper_right.publish(Float64(0.02))
@@ -47,42 +39,33 @@ class ArmTester:
         rospy.sleep(0.5)
 
     def run_test(self):
-        """Execute test movement sequence."""
         rospy.loginfo("")
         rospy.loginfo("=" * 60)
         rospy.loginfo("    ARM STARTUP TEST - Verifying arm operation")
         rospy.loginfo("=" * 60)
         rospy.loginfo("")
         
-        # 1. Start position - standing up
         rospy.loginfo("[1/10] Moving to start position (standing up)...")
         self.move(0, 0, 0, 0, 0, 2.0)
         
-        # 2. Rotate base LEFT
         rospy.loginfo("[2/10] Rotating base LEFT...")
         self.move(1.0, 0, 0, 0, 0, 1.5)
         
-        # 3. Rotate base RIGHT
         rospy.loginfo("[3/10] Rotating base RIGHT...")
         self.move(-1.0, 0, 0, 0, 0, 1.5)
         
-        # 4. Back to center
         rospy.loginfo("[4/10] Centering base...")
         self.move(0, 0, 0, 0, 0, 1.0)
         
-        # 5. Bend shoulder forward
         rospy.loginfo("[5/10] Bending shoulder FORWARD...")
         self.move(0, 1.2, 0, 0, 0, 1.5)
         
-        # 6. Bend elbow
         rospy.loginfo("[6/10] Bending elbow...")
         self.move(0, 1.2, -1.5, 0, 0, 1.5)
         
-        # 7. Bend wrist
         rospy.loginfo("[7/10] Bending wrist DOWN...")
         self.move(0, 1.2, -1.5, -0.8, 0, 1.5)
         
-        # 8. Test gripper
         rospy.loginfo("[8/10] Testing gripper - OPEN...")
         self.gripper("open")
         rospy.sleep(0.5)
@@ -92,7 +75,6 @@ class ArmTester:
         rospy.sleep(0.5)
         self.gripper("open")
         
-        # 10. Ready position (bent forward, ready to pick)
         rospy.loginfo("[10/10] Moving to READY position...")
         self.move(0, 0.8, -1.2, -0.4, 0, 2.0)
         

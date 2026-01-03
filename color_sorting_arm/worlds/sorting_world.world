@@ -2,7 +2,6 @@
 <sdf version="1.6">
   <world name="sorting_world">
     
-    <!-- Physics settings -->
     <physics type="ode">
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1</real_time_factor>
@@ -10,18 +9,14 @@
       <gravity>0 0 -9.8</gravity>
     </physics>
 
-    <!-- Lighting -->
     <include>
       <uri>model://sun</uri>
     </include>
 
-    <!-- Ground plane -->
     <include>
       <uri>model://ground_plane</uri>
     </include>
 
-    <!-- =========================== TABLE =========================== -->
-    <!-- Table: 80cm x 60cm, height 70cm, robot sits on edge -->
     <model name="table">
       <static>true</static>
       <link name="table_link">
@@ -47,18 +42,14 @@
       </link>
     </model>
 
-    <!-- =========================== OVERHEAD CAMERA =========================== -->
-    <!-- Camera with blue body and red lens, mounted on pole -->
     <model name="overhead_camera">
       <static>true</static>
-      <!-- LOWERED to z=1.0m (closer to table at 0.7m) for better view -->
       <pose>0.35 0 1.0 0 0 0</pose>
       <link name="camera_link">
         <inertial>
           <mass>0.5</mass>
         </inertial>
         
-        <!-- Camera Body (blue box) -->
         <visual name="body_visual">
           <geometry>
             <box>
@@ -71,7 +62,6 @@
           </material>
         </visual>
         
-        <!-- Camera Lens (red cylinder) pointing DOWN -->
         <visual name="lens_visual">
           <pose>0 0 -0.08 0 0 0</pose>
           <geometry>
@@ -87,7 +77,6 @@
         </visual>
         
         <sensor type="camera" name="camera">
-          <!-- Camera looking DOWN: pitch=1.5708 (90 degrees) points camera downward -->
           <pose>0 0 -0.08 0 1.5708 0</pose>
           <always_on>1</always_on>
           <visualize>true</visualize>
@@ -116,7 +105,6 @@
       </link>
     </model>
 
-    <!-- Camera Stand (visual only) -->
     <model name="camera_stand">
       <static>true</static>
       <link name="pole">
@@ -150,11 +138,6 @@
       </link>
     </model>
 
-    <!-- =========================== COLORED CUBES =========================== -->
-    <!-- Table top is at z=0.7, cube half-height is 0.025, so cube base at z=0.725 -->
-    <!-- Cubes placed within arm reach (0.2m to 0.5m from robot) -->
-    
-    <!-- RED CUBE 1 -->
     <model name="red_cube_1">
       <pose>0.25 0.15 0.725 0 0 0.4</pose>
       <link name="link">
@@ -187,7 +170,6 @@
       </link>
     </model>
 
-    <!-- RED CUBE 2 -->
     <model name="red_cube_2">
       <pose>0.4 0.2 0.725 0 0 1.2</pose>
       <link name="link">
@@ -220,7 +202,6 @@
       </link>
     </model>
 
-    <!-- BLUE CUBE 1 -->
     <model name="blue_cube_1">
       <pose>0.3 -0.1 0.725 0 0 0.8</pose>
       <link name="link">
@@ -253,7 +234,6 @@
       </link>
     </model>
 
-    <!-- BLUE CUBE 2 -->
     <model name="blue_cube_2">
       <pose>0.5 -0.15 0.725 0 0 2.1</pose>
       <link name="link">
@@ -286,7 +266,6 @@
       </link>
     </model>
 
-    <!-- GREEN CUBE 1 -->
     <model name="green_cube_1">
       <pose>0.35 0.05 0.725 0 0 0.3</pose>
       <link name="link">
@@ -319,7 +298,6 @@
       </link>
     </model>
 
-    <!-- GREEN CUBE 2 -->
     <model name="green_cube_2">
       <pose>0.45 0.1 0.725 0 0 1.7</pose>
       <link name="link">
@@ -352,10 +330,6 @@
       </link>
     </model>
 
-    <!-- =========================== SORTING BINS =========================== -->
-    <!-- Bins on far side of table, within arm reach -->
-    
-    <!-- RED BIN -->
     <model name="red_bin">
       <static>true</static>
       <pose>0.6 0.25 0.72 0 0 0</pose>
@@ -408,7 +382,6 @@
       </link>
     </model>
 
-    <!-- BLUE BIN -->
     <model name="blue_bin">
       <static>true</static>
       <pose>0.6 -0.25 0.72 0 0 0</pose>
@@ -461,7 +434,6 @@
       </link>
     </model>
 
-    <!-- GREEN BIN -->
     <model name="green_bin">
       <static>true</static>
       <pose>0.6 0 0.72 0 0 0</pose>

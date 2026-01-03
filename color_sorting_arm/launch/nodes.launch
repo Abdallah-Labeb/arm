@@ -1,27 +1,22 @@
 <launch>
 
-  <!-- Argument for startup delay -->
   <arg name="start_delay" default="5.0"/>
 
-  <!-- Color Detector Node - detects colored objects in camera image -->
   <node name="color_detector" pkg="color_sorting_arm" type="color_detector.py" 
         output="screen" launch-prefix="bash -c 'sleep $(arg start_delay); exec $0 $@' ">
     <param name="use_sim_time" value="true"/>
   </node>
   
-  <!-- Position Estimator Node - converts 2D detections to 3D positions -->
   <node name="position_estimator" pkg="color_sorting_arm" type="position_estimator.py" 
         output="screen" launch-prefix="bash -c 'sleep $(arg start_delay); exec $0 $@' ">
     <param name="use_sim_time" value="true"/>
   </node>
   
-  <!-- Gripper Controller Node - controls gripper open/close -->
   <node name="gripper_controller" pkg="color_sorting_arm" type="gripper_controller.py" 
         output="screen" launch-prefix="bash -c 'sleep $(arg start_delay); exec $0 $@' ">
     <param name="use_sim_time" value="true"/>
   </node>
   
-  <!-- Sorting Controller Node - main logic for pick and place -->
   <node name="sorting_controller" pkg="color_sorting_arm" type="sorting_controller.py" 
         output="screen" launch-prefix="bash -c 'sleep $(arg start_delay); exec $0 $@' ">
     <param name="use_sim_time" value="true"/>
