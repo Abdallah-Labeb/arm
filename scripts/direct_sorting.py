@@ -109,7 +109,7 @@ class DirectSorting:
     
     def pick_cube(self, cube_name):
         if cube_name not in self.cube_poses:
-            rospy.logwarn(f"Cube {cube_name} not found!")
+            rospy.logwarn(f"Cube {cube_name} not found in model states!")
             return False
         
         pose = self.cube_poses[cube_name]
@@ -117,7 +117,7 @@ class DirectSorting:
         
         rospy.loginfo(f"Picking {cube_name} at ({x:.2f}, {y:.2f}, {z:.2f})")
         
-        approach_z = z + 0.15
+        approach_z = z + 0.05
         joints = self.inverse_kinematics(x, y, approach_z)
         if not self.move_joints(joints, 2.0):
             return False
@@ -130,7 +130,7 @@ class DirectSorting:
         
         self.close_gripper()
         
-        joints = self.inverse_kinematics(x, y, z + 0.15)
+        joints = self.inverse_kinematics(x, y, z + 0.05)
         self.move_joints(joints, 1.0)
         
         return True
@@ -140,7 +140,7 @@ class DirectSorting:
         
         rospy.loginfo(f"Placing in {color} bin at ({x:.2f}, {y:.2f}, {z:.2f})")
         
-        approach_z = z + 0.15
+        approach_z = z + 0.05
         joints = self.inverse_kinematics(x, y, approach_z)
         if not self.move_joints(joints, 2.0):
             return False
@@ -151,7 +151,7 @@ class DirectSorting:
         
         self.open_gripper()
         
-        joints = self.inverse_kinematics(x, y, z + 0.15)
+        joints = self.inverse_kinematics(x, y, z + 0.05)
         self.move_joints(joints, 1.0)
         
         return True
