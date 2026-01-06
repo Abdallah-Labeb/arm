@@ -110,8 +110,11 @@ class DirectSorting:
         rospy.sleep(0.5)
     
     def move_to_home(self):
-        home = [0.0, -0.5, -1.0, 1.5, 0.0]
-        self.move_joints(home, 2.0)
+        # Home: hover over table center pointing downward
+        target = self.inverse_kinematics(0.25, 0.0, self.BASE_Z + 0.04)
+        if target is None:
+            target = [0.0, -0.5, -1.0, 1.5, 0.0]
+        self.move_joints(target, 2.0)
     
     def pick_cube(self, cube_name):
         if cube_name not in self.cube_poses:
