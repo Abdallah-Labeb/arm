@@ -159,6 +159,13 @@ chmod +x *.py
 roslaunch color_sorting_arm complete_system.launch
 ```
 
+
+### Launch Movements test 
+
+```bash
+roslaunch color_sorting_arm direct_sorting.launch
+```
+
 ### Launch Components Separately
 
 **Terminal 1 - Gazebo:**
