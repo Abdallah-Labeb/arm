@@ -332,7 +332,7 @@
 
     <model name="red_bin">
       <static>true</static>
-      <pose>0.6 0.25 0.72 0 0 0</pose>
+      <pose>0.45 0.20 0.72 0 0 0</pose>
       <link name="link">
         <visual name="bottom">
           <pose>0 0 0 0 0 0</pose>
@@ -384,7 +384,7 @@
 
     <model name="blue_bin">
       <static>true</static>
-      <pose>0.6 -0.25 0.72 0 0 0</pose>
+      <pose>0.45 -0.20 0.72 0 0 0</pose>
       <link name="link">
         <visual name="bottom">
           <pose>0 0 0 0 0 0</pose>
@@ -436,7 +436,7 @@
 
     <model name="green_bin">
       <static>true</static>
-      <pose>0.6 0 0.72 0 0 0</pose>
+      <pose>0.45 0.0 0.72 0 0 0</pose>
       <link name="link">
         <visual name="bottom">
           <pose>0 0 0 0 0 0</pose>
