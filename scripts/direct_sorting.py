@@ -24,9 +24,9 @@ class DirectSorting:
     }
     
     L1 = 0.11
-    L2 = 0.15
-    L3 = 0.13
-    L4 = 0.16
+    L2 = 0.25
+    L3 = 0.20
+    L4 = 0.12
     
     def __init__(self):
         rospy.init_node('direct_sorting')
