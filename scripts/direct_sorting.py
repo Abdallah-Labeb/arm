@@ -23,7 +23,7 @@ class DirectSorting:
         'green': (0.35, 0.0, 0.75)
     }
     
-    BASE_Z = 0.7
+    BASE_Z = 0.725
     L1 = 0.11
     L2 = 0.25
     L3 = 0.20
